@@ -3,6 +3,7 @@ const btnSpeak = document.getElementById('btn-speak');
 const btnStop = document.getElementById('btn-stop');
 const btnClear = document.getElementById('btn-clear');
 const ipaDisplay = document.getElementById('ipa-display');
+const banglaDisplay = document.getElementById('bangla-display');
 const historyList = document.getElementById('history-list');
 const btnSettings = document.getElementById('btn-settings');
 const settingsModal = document.getElementById('settings-modal');
@@ -22,9 +23,11 @@ const settingShowIpa = document.getElementById('setting-show-ipa');
 
 let settings = {};
 let ipaDict = new Map();
+let banglaDict = new Map();
 let voices = [];
 let history = [];
 let dictionarySize = 0;
+let banglaDictSize = 0;
 
 const CUSTOM_IPA = {
     "yamin": "jɑːˈmiːn",
@@ -37,9 +40,9 @@ async function init() {
     updateSettingsUI();
 
     const dictContent = await window.electronAPI.getIpaDict();
-    if (dictContent) {
-        parseIpaDict(dictContent);
-    }
+    if (dictContent) parseIpaDict(dictContent);
+    const banglaContent = await window.electronAPI.getBanglaDict();
+    if (banglaContent) parseBanglaDict(banglaContent);
 
     populateVoices();
     if (speechSynthesis.onvoiceschanged !== undefined) {
@@ -63,6 +66,22 @@ function parseIpaDict(content) {
     }
     dictionarySize = ipaDict.size;
     console.log(`Loaded ${dictionarySize} words`);
+}
+
+function parseBanglaDict(content) {
+    const lines = content.split('\n');
+    for (const line of lines) {
+        const parts = line.trim().split('|').filter(Boolean);
+        if (parts.length >= 2) {
+            const word = parts[0].toLowerCase().trim();
+            const meaning = parts[1].trim();
+            if (!banglaDict.has(word)) banglaDict.set(word, []);
+            const arr = banglaDict.get(word);
+            if (!arr.includes(meaning)) arr.push(meaning);
+        }
+    }
+    banglaDictSize = banglaDict.size;
+    console.log(`Loaded Bangla ${banglaDictSize} words`);
 }
 
 function populateVoices() {
@@ -100,7 +119,7 @@ function updateSettingsUI() {
     settingShowIpa.checked = settings.showIpa;
 
     const statEl = document.getElementById('dict-stat');
-    if (statEl) statEl.textContent = `${dictionarySize.toLocaleString()} words`;
+    if (statEl) statEl.textContent = `IPA: ${dictionarySize.toLocaleString()} · Bangla: ${banglaDictSize.toLocaleString()}`;
 }
 
 function saveSettingsFromUI() {
@@ -200,6 +219,22 @@ function getIpa(text) {
     return '(Not found)';
 }
 
+function getBangla(text) {
+    const lower = text.toLowerCase().trim();
+    const cleanWord = (w) => w.toLowerCase().replace(/[^a-z']/g, '');
+    if (lower.includes(' ')) {
+        const words = lower.split(/\s+/);
+        const parts = words.map(w => {
+            const key = banglaDict.has(w) ? w : cleanWord(w);
+            const arr = banglaDict.get(key);
+            return arr && arr.length ? arr.join(', ') : '';
+        });
+        return parts.join('   ').trim() || '';
+    }
+    const arr = banglaDict.get(lower) || banglaDict.get(cleanWord(lower));
+    return arr && arr.length ? arr.join(', ') : '';
+}
+
 function addToHistory(text) {
     if (!text) return;
     history = history.filter(item => item !== text);
@@ -232,6 +267,7 @@ function handleInput(text) {
     } else {
         ipaDisplay.classList.remove('ipa-error');
     }
+    banglaDisplay.textContent = getBangla(text);
 
     speak(text);
     addToHistory(text);
@@ -254,6 +290,7 @@ function setupEventListeners() {
     btnClear.onclick = () => {
         textInput.value = '';
         ipaDisplay.textContent = '';
+        banglaDisplay.textContent = '';
         textInput.focus();
     };
 
@@ -284,6 +321,7 @@ function setupEventListeners() {
             } else {
                 ipaDisplay.classList.remove('ipa-error');
             }
+            banglaDisplay.textContent = getBangla(text);
 
             if (settings.autoSpeak) {
                 speak(text);
@@ -299,6 +337,7 @@ function setupEventListeners() {
     window.electronAPI.onClearEntry(() => {
         textInput.value = '';
         ipaDisplay.textContent = '';
+        banglaDisplay.textContent = '';
     });
 
     window.electronAPI.onCopyIpa(() => {

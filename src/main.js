@@ -65,9 +65,7 @@ function createWindow() {
         {
             label: 'File',
             submenu: [
-                { label: 'Settings', click: () => mainWindow.webContents.send('show-settings') },
-                { type: 'separator' },
-                { label: 'Clear History', click: () => mainWindow.webContents.send('clear-history') },
+                { label: 'Clear Entry', accelerator: 'CmdOrCtrl+K', click: () => mainWindow.webContents.send('clear-entry') },
                 { type: 'separator' },
                 { label: 'Exit', click: () => { app.isQuitting = true; app.quit(); } }
             ]
@@ -92,10 +90,7 @@ function createWindow() {
             label: 'View',
             submenu: [
                 { role: 'reload' },
-                { role: 'forceReload' },
-                { role: 'toggleDevTools' },
                 { type: 'separator' },
-                { role: 'resetZoom' },
                 { role: 'zoomIn' },
                 { role: 'zoomOut' },
                 { type: 'separator' },
@@ -175,6 +170,15 @@ ipcMain.handle('get-ipa-dict', async () => {
         return fs.readFileSync(dictPath, 'utf-8');
     } catch (e) {
         console.error("Failed to read IPA dict", e);
+        return null;
+    }
+});
+ipcMain.handle('get-bangla-dict', async () => {
+    const dictPath = path.join(__dirname, '../asset/bangla_dictionary.txt');
+    try {
+        return fs.readFileSync(dictPath, 'utf-8');
+    } catch (e) {
+        console.error("Failed to read Bangla dict", e);
         return null;
     }
 });

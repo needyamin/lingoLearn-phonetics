@@ -4,6 +4,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getSettings: () => ipcRenderer.invoke('get-settings'),
     setSetting: (key, value) => ipcRenderer.invoke('set-setting', key, value),
     getIpaDict: () => ipcRenderer.invoke('get-ipa-dict'),
+    getBanglaDict: () => ipcRenderer.invoke('get-bangla-dict'),
     onClipboardUpdate: (callback) => ipcRenderer.on('clipboard-update', (_event, value) => callback(value)),
     onClearHistory: (callback) => ipcRenderer.on('clear-history', (_event) => callback()),
     onClearEntry: (callback) => ipcRenderer.on('clear-entry', (_event) => callback()),

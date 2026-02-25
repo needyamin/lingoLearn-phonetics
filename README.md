@@ -1,57 +1,37 @@
 # TTS Pronunciation Practice
 
-A modern desktop application built with Electron for practicing English pronunciation using Text-to-Speech (TTS) and IPA (International Phonetic Alphabet) display.
+Desktop app for practicing English pronunciation with Text-to-Speech and IPA. Includes an English–Bangla dictionary.
 
 ## Features
 
-- **Text-to-Speech:** Hear the pronunciation of any English word or phrase.
-- **IPA Display:** View the phonetic transcription of words.
-- **Voice Selection:** Choose from installed system voices.
-- **Clipboard Monitoring:** Automatically detect copied text and speak/display IPA (configurable).
-- **History:** Keep track of recently practiced words.
-- **Customizable:** Adjust speech rate, volume, and toggle features via settings.
-- **System Tray:** Minimizes to the system tray for easy access.
+- **TTS** – Hear words/phrases with system voices
+- **IPA** – Phonetic transcription (CMU Dict)
+- **Bangla** – English-to-Bangla meanings
+- **Clipboard** – Optional: speak/show IPA when you copy text
+- **History** – Recent words; settings for rate, volume, voice
 
-## Installation
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/needyamin/tts-pronunciation-practice.git
-    cd tts-pronunciation-practice
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-
-## Usage
-
-### Running Locally
-
-To start the application in development mode:
+## Quick Start
 
 ```bash
+git clone https://github.com/needyamin/tts-pronunciation-practice.git
+cd tts-pronunciation-practice
+npm install
 npm start
 ```
 
-### Building the Application
+## Build
 
-To build the standalone executable (portable version):
+| Platform | Command | Output |
+|----------|---------|--------|
+| **Windows** (portable exe) | `npm run dist` | `dist/TTS Pronunciation Practice 1.0.0.exe` |
+| **Linux** (AppImage) | `npm run dist:linux:docker` | `dist/TTS Pronunciation Practice-1.0.0.AppImage` |
 
-```bash
-npm run pack
-```
+**Linux on Windows:** Need Docker. See [build-linux.md](build-linux.md).
 
-The build output will be located in the `release-builds/` directory. You will find a folder named `tts-pronunciation-win32-x64` containing the executable `tts-pronunciation.exe`.
+## Tech
 
-## Technologies Used
-
-- **Electron:** Cross-platform desktop application framework.
-- **Web Speech API:** Native browser speech synthesis.
-- **CMU Dict:** Source for IPA pronunciation data.
-- **Electron Store:** Persistent settings management.
+Electron · Web Speech API · CMU Pronouncing Dictionary · Bangla dictionary (asset)
 
 ## License
 
-This project is licensed under the ISC License.
+ISC

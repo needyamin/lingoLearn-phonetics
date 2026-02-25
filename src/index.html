@@ -32,6 +32,10 @@
             <span class="ipa-label">IPA Phonetics</span>
             <div id="ipa-display" class="ipa-text"></div>
         </div>
+        <div class="bangla-container">
+            <span class="ipa-label">Bangla</span>
+            <div id="bangla-display" class="ipa-text"></div>
+        </div>
 
         <div class="history-container">
             <div class="history-header">
@@ -93,28 +97,26 @@
 
     <!-- About Modal -->
     <div id="about-modal" class="modal">
-        <div class="modal-content" style="text-align: center;">
-            <span class="close-about" style="float: right; cursor: pointer; font-size: 24px;">&times;</span>
-            <h2 style="margin-bottom: 10px; border-bottom: none;">TTS Pronunciation Practice</h2>
-            <p style="color: #666; font-size: 14px; margin-top: 0;">Version 1.0.0</p>
-
-            <div style="margin: 20px 0; text-align: left; background: #f9fafb; padding: 15px; border-radius: 8px;">
-                <p><strong>Developer:</strong> Yamin</p>
-                <p><strong>License:</strong> ISC</p>
-                <p style="margin-top: 10px;">A modern tool for practicing English pronunciation using Text-to-Speech and
-                    IPA phonetics.</p>
+        <div class="modal-content about-content">
+            <span class="close close-about">&times;</span>
+            <div class="about-header">
+                <h2 class="about-title">TTS Pronunciation Practice</h2>
+                <span class="about-version">1.0.0</span>
             </div>
-
-            <div style="text-align: left; font-size: 13px;">
-                <p><strong>Powered by:</strong></p>
-                <ul style="padding-left: 20px; color: #555;">
-                    <li>Electron</li>
-                    <li>Web Speech API</li>
-                    <li>CMU Pronouncing Dictionary</li>
-                </ul>
+            <p class="about-tagline">Practice English pronunciation with Text-to-Speech and IPA phonetics.</p>
+            <div class="about-meta">
+                <span class="about-meta-item"><strong>Developer</strong> Yamin</span>
+                <span class="about-meta-item"><strong>License</strong> ISC</span>
             </div>
-
-            <button id="btn-close-about" class="btn-speak" style="margin-top: 20px; width: 100%;">Close</button>
+            <div class="about-powered">
+                <span class="about-powered-label">Powered by</span>
+                <div class="about-badges">
+                    <span class="about-badge">Electron</span>
+                    <span class="about-badge">Web Speech API</span>
+                    <span class="about-badge">CMU Pronouncing Dictionary</span>
+                </div>
+            </div>
+            <button id="btn-close-about" class="btn-speak about-close-btn">Close</button>
         </div>
     </div>
 
