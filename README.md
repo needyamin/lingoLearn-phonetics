@@ -28,7 +28,32 @@ npm start
 | **Windows** (portable exe) | `npm run dist` | `dist/TTS Pronunciation Practice 1.0.0.exe` |
 | **Linux** (AppImage) | `npm run dist:linux:docker` | `dist/TTS Pronunciation Practice-1.0.0.AppImage` |
 
-**Linux on Windows:** Need Docker. See [build-linux.md](build-linux.md).
+### Linux AppImage (on Windows)
+
+Use Docker. One command from project root:
+
+```bash
+npm run dist:linux:docker
+```
+
+Or manually:
+
+```bash
+docker build -f Dockerfile.linux-build -t tts-pronunciation-linux-builder .
+docker run --rm -v "y:/Projects/tts-pronunciation-practice/dist:/app/dist" tts-pronunciation-linux-builder
+```
+
+Output: `dist/TTS Pronunciation Practice-1.0.0.AppImage` (~101 MB). Requires Docker Desktop.
+
+**Alternatives:** Enable Windows Developer Mode, or run PowerShell as Administrator, then `npm run dist:linux`. Or use GitHub Actions to build on Linux.
+
+### Using the Linux AppImage
+
+1. Download `TTS Pronunciation Practice-1.0.0.AppImage`
+2. `chmod +x "TTS Pronunciation Practice-1.0.0.AppImage"`
+3. `./"TTS Pronunciation Practice-1.0.0.AppImage"`
+
+No install needed. Needs Linux kernel 3.10+, GLIBC 2.17+, X11 or Wayland.
 
 ## Tech
 
@@ -37,4 +62,3 @@ Electron · Web Speech API · CMU Pronouncing Dictionary · Bangla dictionary (a
 ## License
 
 ISC
-
