@@ -373,6 +373,16 @@ function setupEventListeners() {
     window.electronAPI.onShowAbout(() => {
         aboutModal.style.display = "block";
     });
+
+    window.electronAPI.onDictsUpdated?.(async () => {
+        ipaDict.clear();
+        banglaDict.clear();
+        const dictContent = await window.electronAPI.getIpaDict();
+        if (dictContent) parseIpaDict(dictContent);
+        const banglaContent = await window.electronAPI.getBanglaDict();
+        if (banglaContent) parseBanglaDict(banglaContent);
+        updateSettingsUI();
+    });
 }
 
 init();

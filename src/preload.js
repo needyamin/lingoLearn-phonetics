@@ -11,5 +11,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onCopyIpa: (callback) => ipcRenderer.on('copy-ipa', (_event) => callback()),
     onShowSettings: (callback) => ipcRenderer.on('show-settings', (_event) => callback()),
     onShowAbout: (callback) => ipcRenderer.on('show-about', (_event) => callback()),
+    onDictsUpdated: (callback) => ipcRenderer.on('dicts-updated', () => callback()),
     openExternal: (url) => ipcRenderer.invoke('open-external', url)
 });

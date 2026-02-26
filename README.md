@@ -64,6 +64,11 @@ No install needed. Needs Linux kernel 3.10+, GLIBC 2.17+, X11 or Wayland.
    - Attach `LingoLearn Phonetics 1.0.0.exe` (and optionally `LingoLearn Phonetics-1.0.0.AppImage`).
    - Publish. Users download the exe from the release page.
 
+## Auto-update
+
+- **App:** When a new release is published on [GitHub Releases](https://github.com/needyamin/lingoLearn-phonetics/releases) (tag e.g. `v1.0.0`), the app checks and can auto-download and install on quit.
+- **Dictionaries:** IPA and Bangla dictionary files are updated automatically from the repo when the app runs; no new app build needed for dict changes.
+
 ## Tech
 
 Electron · Web Speech API · CMU Pronouncing Dictionary · Bangla dictionary (asset)

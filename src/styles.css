@@ -28,6 +28,16 @@ body {
     overflow: hidden;
 }
 
+body, .app-container, .app-container * {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+input, textarea, select {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
 .app-container {
     background-color: var(--card-bg);
     width: 95%;
@@ -45,8 +55,10 @@ body {
 
 .toolbar {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+    z-index: 2;
 }
 
 .btn-settings {
@@ -66,7 +78,7 @@ body {
     transform: rotate(30deg);
 }
 
-.app-logo { width: 100vw; position: relative; left: 50%; margin: 0 0 16px -50vw; padding: 14px 30px; box-sizing: border-box; background: #111; pointer-events: none; }
+.app-logo { width: 100vw; position: relative; left: 50%; margin: -30px 0 16px -50vw; padding: 14px 30px; box-sizing: border-box; background: #111; }
 .logo-img { width: 100%; height: auto; max-height: 64px; object-fit: contain; display: block; pointer-events: none; }
 
 h1, .app-container h3 {
@@ -229,6 +241,8 @@ button {
     font-family: 'Arial Unicode MS', 'Lucida Sans Unicode', sans-serif;
     font-weight: 700;
     color: var(--primary-color);
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 .ipa-error {
@@ -409,7 +423,7 @@ button {
 .about-content { position: relative; max-width: 420px; padding: 0; overflow: hidden; border-radius: var(--border-radius); }
 .about-content .close { position: absolute; top: 12px; right: 12px; z-index: 1; margin: 0; }
 .about-header { text-align: center; padding: 24px 40px 20px 24px; border-bottom: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; }
-.about-title { margin: 0; border: none; padding: 0; font-size: 1.5rem; font-weight: 700; color: var(--text-color); text-align: center; width: 100%; }
+.about-title { margin: 0; border: none; padding: 0; font-size: 1.25rem; font-weight: 600; color: var(--text-color); text-align: center; width: 100%; }
 .about-version { display: inline-block; font-size: 11px; color: var(--secondary-text); background: var(--bg-color); padding: 4px 10px; border-radius: 20px; margin-bottom: 10px; }
 .about-tagline { margin: 0 0 16px; font-size: 12px; color: var(--secondary-text); line-height: 1.45; text-align: center; }
 .about-developer { display: flex; align-items: center; gap: 14px; margin: 20px 24px; padding: 14px 16px; background: var(--bg-color); border-radius: 10px; text-align: left; }

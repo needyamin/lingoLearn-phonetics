@@ -1,7 +1,13 @@
 const { app, BrowserWindow, Tray, Menu, ipcMain, clipboard, shell } = require('electron');
 const path = require('path');
-const Store = require('electron-store');
 const fs = require('fs');
+const https = require('https');
+const Store = require('electron-store');
+
+let autoUpdater;
+if (app.isPackaged) {
+    try { autoUpdater = require('electron-updater').autoUpdater; } catch (_) { autoUpdater = null; }
+}
 
 const store = new Store();
 let mainWindow;
@@ -46,6 +52,24 @@ function createWindow() {
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
         shell.openExternal(url);
         return { action: 'deny' };
+    });
+
+    mainWindow.webContents.on('context-menu', (event, params) => {
+        if (params.isEditable) {
+            const ctxMenu = Menu.buildFromTemplate([
+                { role: 'cut', enabled: params.editFlags.canCut },
+                { role: 'copy', enabled: params.editFlags.canCopy },
+                { role: 'paste', enabled: params.editFlags.canPaste },
+                { type: 'separator' },
+                { role: 'selectAll' }
+            ]);
+            ctxMenu.popup({ window: mainWindow });
+        } else if (params.selectionText && params.selectionText.trim().length > 0) {
+            const ctxMenu = Menu.buildFromTemplate([
+                { role: 'copy', enabled: true }
+            ]);
+            ctxMenu.popup({ window: mainWindow });
+        }
     });
 
     mainWindow.on('minimize', (event) => {
@@ -142,6 +166,12 @@ app.whenReady().then(() => {
     createWindow();
     createTray();
     startClipboardMonitor();
+    if (autoUpdater) {
+        autoUpdater.autoDownload = true;
+        autoUpdater.autoInstallOnAppQuit = true;
+        autoUpdater.checkForUpdatesAndNotify().catch(() => {});
+    }
+    fetchDictUpdates();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -160,22 +190,49 @@ ipcMain.handle('set-setting', (event, key, value) => {
         lastClipboardText = clipboard.readText();
     }
 });
-ipcMain.handle('get-ipa-dict', async () => {
-    const dictPath = path.join(__dirname, '../asset/cmudict-0.7b-ipa.txt');
+const DICT_BASE = 'https://raw.githubusercontent.com/needyamin/lingoLearn-phonetics/main/asset';
+
+function getDictPath(name) {
+    const userDir = path.join(app.getPath('userData'), 'dicts');
+    if (!fs.existsSync(userDir)) fs.mkdirSync(userDir, { recursive: true });
+    return path.join(userDir, name);
+}
+
+function readDict(userPath, bundledPath) {
     try {
-        return fs.readFileSync(dictPath, 'utf-8');
+        if (fs.existsSync(userPath)) return fs.readFileSync(userPath, 'utf-8');
+    } catch (_) {}
+    try {
+        return fs.readFileSync(bundledPath, 'utf-8');
     } catch (e) {
-        console.error("Failed to read IPA dict", e);
+        console.error('Failed to read dict', e);
         return null;
     }
-});
-ipcMain.handle('get-bangla-dict', async () => {
-    const dictPath = path.join(__dirname, '../asset/bangla_dictionary.txt');
-    try {
-        return fs.readFileSync(dictPath, 'utf-8');
-    } catch (e) {
-        console.error("Failed to read Bangla dict", e);
-        return null;
-    }
-});
+}
+
+function fetchDictUpdates() {
+    const files = [
+        { name: 'cmudict-0.7b-ipa.txt', bundled: path.join(__dirname, '../asset/cmudict-0.7b-ipa.txt') },
+        { name: 'bangla_dictionary.txt', bundled: path.join(__dirname, '../asset/bangla_dictionary.txt') }
+    ];
+    files.forEach(({ name, bundled }) => {
+        const userPath = getDictPath(name);
+        const url = `${DICT_BASE}/${name}`;
+        https.get(url, (res) => {
+            if (res.statusCode !== 200) return;
+            const chunks = [];
+            res.on('data', (c) => chunks.push(c));
+            res.on('end', () => {
+                const data = Buffer.concat(chunks).toString('utf-8');
+                if (data && data.length > 100) {
+                    try { fs.writeFileSync(userPath, data); } catch (_) {}
+                    if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('dicts-updated');
+                }
+            });
+        }).on('error', () => {});
+    });
+}
+
+ipcMain.handle('get-ipa-dict', async () => readDict(getDictPath('cmudict-0.7b-ipa.txt'), path.join(__dirname, '../asset/cmudict-0.7b-ipa.txt')));
+ipcMain.handle('get-bangla-dict', async () => readDict(getDictPath('bangla_dictionary.txt'), path.join(__dirname, '../asset/bangla_dictionary.txt')));
 ipcMain.handle('open-external', (_, url) => shell.openExternal(url));
